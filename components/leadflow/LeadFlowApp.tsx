@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, Search, Plus, X, CheckCircle2 } from 'lucide-react';
+import { Menu, Search, Plus, X, CheckCircle2, Sparkles } from 'lucide-react';
 import {
   INITIAL_LEADS,
   INITIAL_ACTIVITIES,
@@ -37,6 +37,7 @@ import { ActivitiesView } from './ActivitiesView';
 import { LeadDetailDrawer } from './LeadDetailDrawer';
 import { LeadFormModal } from './LeadFormModal';
 import { AuthScreen } from './AuthScreen';
+import { CommercialAssistantDrawer } from './CommercialAssistantDrawer';
 
 const STORAGE_LEADS_KEY = 'leadflow_leads_v1';
 const STORAGE_ACTIVITIES_KEY = 'leadflow_activities_v1';
@@ -158,6 +159,11 @@ export function LeadFlowApp() {
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [modalDefaultStage, setModalDefaultStage] =
     useState<PipelineStage>('novo');
+
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantFocusedLeadId, setAssistantFocusedLeadId] = useState<
+    string | null
+  >(null);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -569,6 +575,20 @@ export function LeadFlowApp() {
 
               <button
                 type="button"
+                onClick={() => {
+                  setAssistantFocusedLeadId(selectedLeadId);
+                  setAssistantOpen(true);
+                }}
+                className="glass-btn-secondary flex items-center gap-1.5 rounded-xl border-[#c8a0f0]/30 bg-[#c8a0f0]/10 px-3.5 py-2.5 text-xs font-medium text-[#e9d5ff] hover:border-[#c8a0f0]/55 hover:bg-[#c8a0f0]/18 cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-[#c8a0f0]" />
+                <span>
+                  <span className="hidden sm:inline">Assistente </span>IA
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => openNewLeadModal('novo')}
                 className="glass-btn-primary flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
               >
@@ -696,6 +716,23 @@ export function LeadFlowApp() {
         onDeleteLead={handleDeleteLead}
         onToggleActivity={handleToggleActivity}
         onAddActivity={handleAddActivity}
+        onAskAssistant={(lead) => {
+          setAssistantFocusedLeadId(lead.id);
+          setAssistantOpen(true);
+        }}
+      />
+
+      {/* Assistente Comercial IA */}
+      <CommercialAssistantDrawer
+        open={assistantOpen}
+        onClose={() => setAssistantOpen(false)}
+        leads={visibleLeads}
+        activities={visibleActivities}
+        focusedLead={
+          leads.find((l) => l.id === assistantFocusedLeadId) ?? null
+        }
+        onClearFocusedLead={() => setAssistantFocusedLeadId(null)}
+        userName={session.name}
       />
 
       {/* Modal de Cadastro / Edição de Lead */}

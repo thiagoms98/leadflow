@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Circle,
   CalendarClock,
+  Sparkles,
 } from 'lucide-react';
 import {
   PIPELINE_STAGES,
@@ -40,6 +41,7 @@ interface LeadDetailDrawerProps {
   onDeleteLead: (leadId: string) => void;
   onToggleActivity: (activityId: string) => void;
   onAddActivity: (activity: Omit<LeadActivity, 'id' | 'completed'>) => void;
+  onAskAssistant?: (lead: Lead) => void;
 }
 
 function LeadDetailDrawerInner({
@@ -52,6 +54,7 @@ function LeadDetailDrawerInner({
   onDeleteLead,
   onToggleActivity,
   onAddActivity,
+  onAskAssistant,
 }: Omit<LeadDetailDrawerProps, 'lead'> & { lead: Lead }) {
   const [notesDraft, setNotesDraft] = useState(lead.notes);
   const [notesSaved, setNotesSaved] = useState(false);
@@ -125,6 +128,17 @@ function LeadDetailDrawerInner({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {onAskAssistant && (
+              <button
+                type="button"
+                onClick={() => onAskAssistant(lead)}
+                title="Abrir Assistente Comercial para este lead"
+                className="flex h-9 items-center gap-1.5 rounded-xl border border-[#c8a0f0]/35 bg-[#c8a0f0]/12 px-3 text-xs font-medium text-[#e9d5ff] hover:border-[#c8a0f0]/60 hover:bg-[#c8a0f0]/20 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-[#c8a0f0]" />
+                <span>IA</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => onEditLead(lead)}
