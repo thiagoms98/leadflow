@@ -1,0 +1,6 @@
+{
+  "name": "LeadFlow",
+  "description": "Plataforma inteligente de gestão de leads, pipeline comercial e acompanhamento de vendas B2B em tempo real.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
